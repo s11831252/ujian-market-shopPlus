@@ -1,6 +1,6 @@
 # my-project
 
-> ujian行业市场mpvue项目
+> ujian行业市场店铺加强版mpvue项目
 
 ## Build Setup
 
