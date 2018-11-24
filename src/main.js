@@ -10,6 +10,11 @@ Vue.prototype.$UJAPI = UJAPI; //在实例中用$UJAPI调用UJAPI封装好的Rest
 Vue.prototype.$ShoppingAPI = ShoppingAPI; //在实例中用$ShoppingAPI调用ShoppingAPI.js封装好的RestAPI
 Vue.prototype.$store = store;
 Vue.mixin({
+    data(){
+        return {
+            extConfig:{},
+        }
+    },
     computed: {
         $route: function () {
             return this.$router.currentRoute
@@ -22,7 +27,7 @@ Vue.mixin({
         go: function (path) {
             this.$router.push(path);
         },
-        replace: function () {
+        replace: function (path) {
             this.$router.replace(path);
         },
         toast(title){
@@ -33,7 +38,8 @@ Vue.mixin({
         }
     },
     onLoad () {
-        // debugger;
+        let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
+        this.extConfig=extConfig;
         // if (this.$initData$) {
         //   Object.assign(this, JSON.parse(this.$initData$))
         // } else {

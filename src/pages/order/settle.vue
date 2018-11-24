@@ -1,51 +1,57 @@
 <template>
-    <div class="page">
-        <div class="shopinfo">
-            <p>{{getShoppingCarBysId.sName}}
-                <span class="icon">&#xe601;</span>
-            </p>
+  <div class="page">
+    <div class="shoppingcar" v-if="getShoppingCarGoods.length>0">
+      <div class="shopinfo">
+        <p>{{getShoppingCarBysId.sName}}
+          <span class="icon">&#xe601;</span>
+        </p>
+      </div>
+      <ul class="shoppingcarList">
+        <li v-for="(item, index) in getShoppingCarGoods" :key="index">
+          <span class="goods-img"><img :src="item.Image"></span>
+          <span class="goods-info">
+            <p class="goods-name">{{item.gName}}</p>
+            <p class="goods-price">单价：
+              <span>￥{{item.Price}}</span>/件</p>
+            <p class="goods-iteminfo">规格：{{item.ItemName}}</p>
+          </span>
+          <div class="buy">
+            <buy :goods="item" :image="item.Image" :sName="getShoppingCarBysId.sName"></buy>
+          </div>
+        </li>
+      </ul>
+      <div class="orderinfo">
+        <div class="orderinfo-item">商品金额
+          <span>￥{{getShoppingCarAmountBysId}}</span>
         </div>
-        <ul class="shoppingcarList">
-            <li v-for="(item, index) in getShoppingCarGoods" :key="index">
-                <span class="goods-img"><img :src="item.Image"></span>
-                <span class="goods-info">
-                    <p class="goods-name">{{item.gName}}</p>
-                    <p class="goods-price">单价：
-                        <span>￥{{item.Price}}</span>/件</p>
-                    <p class="goods-iteminfo">规格：{{item.ItemName}}</p>
-                </span>
-                <div class="buy">
-                    <buy :goods="item" :image="item.Image" :sName="getShoppingCarBysId.sName"></buy>
-                </div>
-            </li>
-        </ul>
-        <div class="orderinfo">
-            <div class="orderinfo-item">商品金额
-                <span>￥{{getShoppingCarAmountBysId}}</span>
-            </div>
-            <div class="orderinfo-item">配送方式
-                <span v-if="!Logistics.Name" @click="go({path:'/pages/order/logistics',query:{sId:sId}})">请选择<span class="icon">&#xe601;</span></span>
-                <span v-else @click="go({path:'/pages/order/logistics',query:{sId:sId}})" >{{Logistics.LogisticsId?Logistics.Name:Logistics.DistributionMode.DistributionModeText}}</span>
-            </div>
-            <div class="orderinfo-item">送货路程
-                <span>{{Logistics.FreightInfo?Logistics.FreightInfo.distance.text:''}}</span>
-            </div>
-            <div class="orderinfo-item">运费总计
-                <span>￥{{Logistics.FreightInfo?Logistics.FreightInfo.Freight:''}}</span>
-            </div>
-            <div class="orderinfo-item">买家留言：<input type="text" class="left" v-model="Remarks" placeholder="对商品有什么期待，快跟商家说说吧~" /></div>
-            <div class="orderinfo-item">实际支付：
-                <span class="payamount">{{PayAmount}}</span>
-            </div>
+        <div class="orderinfo-item">配送方式
+          <span v-if="!Logistics.Name" @click="go({path:'/pages/order/logistics',query:{sId:sId}})">请选择<span class="icon">&#xe601;</span></span>
+          <span v-else @click="go({path:'/pages/order/logistics',query:{sId:sId}})">{{Logistics.LogisticsId?Logistics.Name:Logistics.DistributionMode.DistributionModeText}}</span>
         </div>
-        <div class="order-total">
-          <span>合计：<span class="order-total-money">￥{{PayAmount}}</span></span>
-          <button @click="pay" class="btn-ok">确认下单</button>
+        <div class="orderinfo-item">送货路程
+          <span>{{Logistics.FreightInfo?Logistics.FreightInfo.distance.text:''}}</span>
         </div>
+        <div class="orderinfo-item">运费总计
+          <span>￥{{Logistics.FreightInfo?Logistics.FreightInfo.Freight:''}}</span>
+        </div>
+        <div class="orderinfo-item">买家留言：<input type="text" class="left" v-model="Remarks" placeholder="对商品有什么期待，快跟商家说说吧~" /></div>
+        <div class="orderinfo-item">实际支付：
+          <span class="payamount">{{PayAmount}}</span>
+        </div>
+      </div>
+      <div class="order-total">
+        <span>合计：<span class="order-total-money">￥{{PayAmount}}</span></span>
+        <button @click="pay" class="btn-ok">确认下单</button>
+      </div>
     </div>
+    <div v-else class="noShoppingcar">
+      <h1>您还没有购买任何商品</h1>
+      <button @click="go({path:'/pages/shop/index',isTab: true })" class="btn-ok">马上去购买吧</button>
+    </div>
+  </div>
 </template>
 <script>
-import buy from "@/components/buy"
+import buy from "@/components/buy";
 import { mapMutations } from "vuex";
 export default {
   components: {
@@ -54,34 +60,34 @@ export default {
   data() {
     return {
       sId: "",
-      Remarks:"",
+      Remarks: ""
     };
   },
-  methods:{
-    ...mapMutations([
-      'ShoppingCarEmpty'
-    ]),
-   async pay(){
-      if(this.getShoppingCarBysId.Logistics.FreightInfo&&this.getShoppingCarGoods.length>0)
-      {
-         var rep = await  this.$ShoppingAPI.Order_Create({
-            LogisticsMode:this.Logistics.LogisticsId,
-            DistributionModeId:this.Logistics.DistributionMode.DistributionModeId,
-            Order_Address_Id:this.Logistics.Order_Address_Id,
-            Remarks : this.Remarks,
-            Order_Goods_Items:this.getShoppingCarGoods.map(item=>{
-              return {gId:item.gId,gItemId:item.ItemId,Number:item.Number}
-             })
+  methods: {
+    ...mapMutations(["ShoppingCarEmpty"]),
+    async pay() {
+      if (
+        this.getShoppingCarBysId.Logistics.FreightInfo &&
+        this.getShoppingCarGoods.length > 0
+      ) {
+        var rep = await this.$ShoppingAPI.Order_Create({
+          LogisticsMode: this.Logistics.LogisticsId,
+          DistributionModeId: this.Logistics.DistributionMode
+            .DistributionModeId,
+          Order_Address_Id: this.Logistics.Order_Address_Id,
+          Remarks: this.Remarks,
+          Order_Goods_Items: this.getShoppingCarGoods.map(item => {
+            return { gId: item.gId, gItemId: item.ItemId, Number: item.Number };
+          })
+        });
+        if (rep.ret == 0) {
+          this.ShoppingCarEmpty({ sId: this.sId });
+          this.$router.replace({
+            path: "/pages/order/pay",
+            query: {
+              OrderId: rep.data
+            }
           });
-        if(rep.ret==0)
-        {
-          this.ShoppingCarEmpty({sId:this.sId})
-            this.$router.replace({
-              path:'/pages/order/pay',
-              query:{
-                OrderId:rep.data
-              }
-            });
         }
       }
     }
@@ -89,18 +95,17 @@ export default {
   computed: {
     Logistics() {
       var shopCar = this.$store.getters.getShoppingCarBysId(this.sId);
-        if (shopCar&&shopCar.Logistics) return shopCar.Logistics;
-      else 
-        return {
-
-        };
+      if (shopCar && shopCar.Logistics) return shopCar.Logistics;
+      else return {};
     },
-    PayAmount(){
-      var amount =0;
-      var goodsAmount =parseFloat(this.getShoppingCarAmountBysId);
-      var LogisticsAmount =parseFloat(this.Logistics.FreightInfo?this.Logistics.FreightInfo.Freight:0);
-      amount=goodsAmount+LogisticsAmount;
-      return amount.toFixed(2)
+    PayAmount() {
+      var amount = 0;
+      var goodsAmount = parseFloat(this.getShoppingCarAmountBysId);
+      var LogisticsAmount = parseFloat(
+        this.Logistics.FreightInfo ? this.Logistics.FreightInfo.Freight : 0
+      );
+      amount = goodsAmount + LogisticsAmount;
+      return amount.toFixed(2);
     },
     getShoppingCarBysId() {
       var shopCar = this.$store.getters.getShoppingCarBysId(this.sId);
@@ -120,14 +125,20 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query && this.$route.query.sId.length > 0) {
+    if (
+      this.$route.query &&
+      this.$route.query.sId &&
+      this.$route.query.sId.length > 0
+    ) {
       this.sId = this.$route.query.sId;
+    } else if (this.extConfig && this.extConfig.sId) {
+      this.sId = this.extConfig.sId;
     }
   }
 };
 </script>
 <style lang="less" scoped>
-.page{
+.page {
   margin-bottom: 45px;
   background-color: #fff;
 }
@@ -212,20 +223,21 @@ export default {
     }
   }
 }
-.order-total{
+.order-total {
   margin-top: 45px;
   background: #fff;
   font-size: 15px;
   border-top: 1px solid #ecf0f1;
   position: fixed;
-  bottom:  0;
+  bottom: 0;
   width: 100%;
   line-height: 40px;
   padding: 5px 10px;
-  .order-total-money{
-      color: #ff5252;
+  .order-total-money {
+    color: #ff5252;
   }
-  .btn-ok {
+}
+ .btn-ok {
     line-height: initial;
     background-color: #12b7f5;
     font-size: 16px;
@@ -237,6 +249,13 @@ export default {
     float: right;
     margin-right: 5%;
   }
+.noShoppingcar{
+  margin-top:100px;
+  text-align:center;
+  .btn-ok{
+    float:none;
+    width: 50%;
+    margin: 0 auto;
+  }
 }
-
 </style>

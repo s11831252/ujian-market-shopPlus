@@ -7,12 +7,12 @@
     "selectedColor":"#c77b2d",
     "list": [
       {
-        "pagePath": "pages/home/index",
-        "text": "行业市场"
+        "pagePath": "pages/shop/index",
+        "text": "店铺主页"
       },
       {
-        "pagePath": "pages/order/index",
-        "text": "个人订单"
+        "pagePath": "pages/order/settle",
+        "text": "购物车"
       },
       {
         "pagePath": "pages/my/index",

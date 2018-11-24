@@ -89,7 +89,7 @@ export default {
                       // 切换至 tabBar页面
                       else
                         this.$router.push({
-                          path: "/pages/home/index",
+                          path: "/pages/shop/index",
                           isTab: true
                         });
                     }

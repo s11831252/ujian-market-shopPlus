@@ -1,5 +1,13 @@
 var routes = [
     {
+        path: 'pages/shop/index',
+        name: 'shop',
+        config: {
+            navigationBarTitleText: '店铺主页',
+            enablePullDownRefresh: false
+          },
+    },
+    {
         path: 'pages/index/index',
         name: 'index',
         config: {
@@ -28,13 +36,6 @@ var routes = [
         name: 'my',
         config: {
             navigationBarTitleText: '我的',
-            enablePullDownRefresh: false
-          },
-    },{
-        path: 'pages/shop/index',
-        name: 'shop',
-        config: {
-            navigationBarTitleText: '店铺主页',
             enablePullDownRefresh: false
           },
     },
