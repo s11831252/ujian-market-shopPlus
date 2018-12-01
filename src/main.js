@@ -38,8 +38,7 @@ Vue.mixin({
         }
     },
     onLoad () {
-        let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
-        this.extConfig=extConfig;
+
         // if (this.$initData$) {
         //   Object.assign(this, JSON.parse(this.$initData$))
         // } else {
@@ -49,11 +48,11 @@ Vue.mixin({
     onUnload(){
         if( this.$options.data)
          Object.assign(this, this.$options.data())
+    },
+    created: function () {
+        let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
+        this.extConfig=extConfig;
     }
-    // created: function () {
-    //     if (this.$route)
-    //         console.log("进入页面:" + this.$route.path);
-    // }
 });
 Vue.use(MpvueRoterPatch);//在Vue实例中使用$Router访问Vuex
 Vue.config.productionTip = false

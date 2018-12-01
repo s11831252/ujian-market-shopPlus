@@ -44,6 +44,7 @@ export default {
       wx.openSetting();
     },
     getUserInfoData(obj) {
+      console.log(obj);
       if (obj.mp.detail.errMsg.indexOf("getUserInfo:ok") != -1) {
         this.userInfo.nickName = obj.mp.detail.userInfo.nickName;
         this.userInfo.avatarUrl = obj.mp.detail.userInfo.avatarUrl;
@@ -68,7 +69,9 @@ export default {
         success: obj => {
           if (obj.errMsg.indexOf("login:ok") > -1) {
             // console.log(obj);
-            this.$ShoppingAPI.Account_wxLogin(obj.code).then(rep => {
+            if(!this.extConfig&&!this.extConfig.appid)
+            return;
+            this.$UJAPI.Account_wxLogin(obj.code,this.extConfig.appid).then(rep => {
               if (rep.ret == 0) {
                 // console.log(rep);
                 this.userInfo.unionid = rep.data.result.unionid;
