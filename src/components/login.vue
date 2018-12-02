@@ -80,8 +80,7 @@ export default {
     async login() {
       var req = await this.$ShoppingAPI.Account_SimpleLogin({
         Phone: this.userInfo.Account,
-        unionid: this.userInfo.unionid,
-        openid: this.userInfo.openid,
+        openid: `${this.extConfig.appid}_${this.userInfo.openid}`,
         UserName: this.userInfo.nickName,
         VerificationCode: this.VerificationCode
       });
@@ -91,10 +90,16 @@ export default {
         var userinfo = await this.$ShoppingAPI.User_Get();
         this.$store.commit("GetUserInfo", userinfo.data);
         if (this.$route.query.redirect)
-          // 切换至 tabBar页面
-          this.$router.push({ path: this.$route.query.redirect, isTab: true });
+        {
+          // 切换至 redirect页面
+          this.$router.push({ path: this.$route.query.redirect });
+        }
         // 切换至 tabBar页面
-        else this.$router.push({ path: "/pages/home/index", isTab: true });
+        else 
+        {
+          this.$router.push({ path: "/pages/shop/index", isTab: true });
+        }
+          
       } else {
         this.toast("登录失败");
       }

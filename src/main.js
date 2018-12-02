@@ -38,7 +38,6 @@ Vue.mixin({
         }
     },
     onLoad () {
-
         // if (this.$initData$) {
         //   Object.assign(this, JSON.parse(this.$initData$))
         // } else {
@@ -50,8 +49,15 @@ Vue.mixin({
          Object.assign(this, this.$options.data())
     },
     created: function () {
-        let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
-        this.extConfig=extConfig;
+        if(this.extConfig&&this.extConfig.sId)
+        {
+
+        }else
+        {
+            let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
+            this.extConfig=extConfig;
+        }
+        // console.log(this.extConfig)
     }
 });
 Vue.use(MpvueRoterPatch);//在Vue实例中使用$Router访问Vuex

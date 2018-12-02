@@ -69,7 +69,7 @@ export default {
         success: obj => {
           if (obj.errMsg.indexOf("login:ok") > -1) {
             // console.log(obj);
-            if(!this.extConfig&&!this.extConfig.appid)
+            if(!this.extConfig||!this.extConfig.appid)
             return;
             this.$UJAPI.Account_wxLogin(obj.code,this.extConfig.appid).then(rep => {
               if (rep.ret == 0) {
@@ -87,7 +87,6 @@ export default {
                         // 切换至 tabBar页面
                         this.$router.push({
                           path: this.$route.query.redirect,
-                          isTab: true
                         });
                       // 切换至 tabBar页面
                       else
