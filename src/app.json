@@ -8,16 +8,14 @@
     "list": [
       {
         "pagePath": "pages/shop/index",
-        "text": "店铺主页"
+        "text": "商品清单"
       },
+
       {
-        "pagePath": "pages/order/settle",
-        "text": "购物车"
-      },
-      {
-        "pagePath": "pages/my/index",
-        "text": "我的"
+        "pagePath": "pages/shop/detail",
+        "text": "联系我们"
       }
     ]
-  }
+  },
+  "navigateToMiniProgramAppIdList":["wx443ed32fe34ba2f0"]
 }

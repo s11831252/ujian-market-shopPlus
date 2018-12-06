@@ -350,6 +350,7 @@ export default {
   // background-color: #298de5;
   border-bottom: 1rpx solid #ccc;
   position: relative;
+  font-size: 0.41rem;
 }
 
 .navbar_item {

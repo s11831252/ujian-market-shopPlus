@@ -1,207 +1,135 @@
 <template>
-    <div class="page">
-        <swipeWeb :swiperData="good_images"></swipeWeb>
-        <div class="goods">
-            <div class="goods-info">
-                <p class="goods-item-price">￥{{selectedItem.Price}}
-                    <span class="original">原价{{selectedItem.MarketingPrice}}</span>
-                </p>
-                <p class="goods-name">{{goods_detail.gName}}</p>
-                <div class="goods-item-info">
-                    <span style="float:left;">月销
-                        <p>{{goods_detail.Month_Sales}}</p>
-                    </span>
-                    <span>评论
-                        <p>{{goods_detail.CommentCount}}</p>
-                    </span>
-                    <span style="float:right;">库存
-                        <p>{{selectedItem.Stock}}</p>件</span>
-                </div>
-            </div>
-            <div class="goods-items">
-                <div class="goods-items-buy">
-                    <span>数量：</span>
-                    <buy :goods="item" :image="goods_detail.Images[0].Thumbnail_url" :sName="sName" v-if="index==selectItem_index" v-for="(item,index) in goods_detail.Goods_Items" :key="index"></buy>
-                </div>
-                <div class="goods-items-show" v-if="HasItems">
-                    <span>规格：</span>
-                    <ul>
-                        <li :class="{'action':index==selectItem_index}" v-for="(item,index) in goods_detail.Goods_Items" :key="index" @click="selectItem(index)">{{item.ItemName}}</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="goods-detail">
-                <p class="goods-detail-title">
-                    <span>商品参数</span>
-                </p>
-                <div class="goods-detail-prop">体积：
-                    <span>长{{goods_detail.Length}}cm*宽{{goods_detail.Width}}cm*高{{goods_detail.Height}}cm</span>
-                </div>
-                <div class="goods-detail-prop">重量：
-                    <span>{{goods_detail.Weight}}kg</span>
-                </div>
-                <div class="goods-detail-prop" :key="index" v-for="(item,index) in goods_detail.Goods_CustomAttr">{{item.AttrName}}：
-                    <span>{{item.AttrValue}}</span>
-                </div>
-            </div>
-            <div class="goods-detail">
-                <p class="goods-detail-title">
-                    <span>商品参数</span>
-                </p>
-                <div class="goods-detail-content">
-
-                </div>
-            </div>
-        </div>
-        <shoppingCar :sId="sId"></shoppingCar>
-    </div>
+  <ul class="shop-detail-info">
+    <li @click="openLocation">
+      <i class="icon">&#xe61f;</i>
+      <span>{{shopDetail.Address}}</span>
+    </li>
+    <li @click="previewImage(shopDetail.License[0],shopDetail.License)">
+      <i class="icon">&#xe654;</i>
+      <span>查看相关证件</span>
+    </li>
+    <li>
+      <i class="icon">&#xe628;</i>
+      <span>主营：{{shopDetail.MainTypeName}}</span>
+    </li>
+    <li>
+      <i class="icon">&#xe60a;</i>
+      <span @click="makePhoneCall(shopDetail.Mobile)">{{shopDetail.Mobile}}</span>&nbsp;
+      <span @click="makePhoneCall(shopDetail.Tel)">{{shopDetail.Tel}}</span>
+    </li>
+    <li>
+      <i class="icon">&#xe623;</i>
+      <span>{{shopDetail.Notice}}</span>
+    </li>
+    <li>
+      <i class="icon">商品分类</i>
+      <ul>
+        <li v-for="(item,index) in shopDetail.ShopImages" :key="index">
+          <!-- <img mode="widthFix" :src="item.ThumbnailUrl"> -->
+          <img :src="item.ThumbnailUrl" @click="previewImage(item,shopDetail.ShopImages)">
+        </li>
+      </ul>
+    </li>
+    <li>
+      <i class="icon">店铺简介</i>
+      <span>{{shopDetail.Brief}}</span>
+    </li>
+  </ul>
 </template>
 <script>
-import swipeWeb from "@/components/swiper";
-import buy from "@/components/buy";
-import shoppingCar from "@/components/shoppingCarToolbar";
 export default {
   data() {
     return {
-      sId: "",
-      sName: "",
-      gId: "",
-      goods_detail: {
-        Price:"",
-        MarketingPrice:"",
-        Stock:"",
-      },
-      selectItem_index: 0
+      gcj02: {
+        latitude: 0,
+        longitude: 0
+      }
     };
   },
   computed: {
-    good_images() {
-      if (this.goods_detail && this.goods_detail.Images)
-        return this.goods_detail.Images.map(item => {
-          return item.Image_url;
-        });
-      else return [];
-    },
-    //判断是否有多规格
-    HasItems(){
-        if (this.goods_detail && this.goods_detail.Images) {
-            return this.goods_detail.Goods_Items[0].ItemName?true:false;
-        }else
-        return false;
-    },
-    selectedItem() {
-      if (this.goods_detail && this.goods_detail.Images) {
-        return this.goods_detail.Goods_Items[this.selectItem_index];
-      } else return {};
+    shopDetail() {
+      return this.$store.state.Shop.ShopDetail;
     }
   },
   methods: {
-    selectItem(index) {
-      this.selectItem_index = index;
+    openLocation() {
+      var that = this;
+      wx.openLocation({
+        latitude: that.gcj02.latitude,
+        longitude: that.gcj02.longitude,
+        scale: 18
+      });
+    },
+    previewImage(item,images) {
+      if (this.isMP) {
+        let urls = images.map(item => {
+          return item.ImgUrl;
+        });
+        wx.previewImage({
+          current: item.ImgUrl, // 当前显示图片的http链接
+          urls // 需要预览的图片http链接列表
+        });
+      }
+    },
+    makePhoneCall(phoneNumber) {
+      if (this.isMP) {
+        wx.makePhoneCall({
+          phoneNumber: phoneNumber
+        });
+      }
     }
   },
-  components: {
-    swipeWeb,
-    buy,
-    shoppingCar
-  },
-  async mounted() {
-    wx.showShareMenu({
-      withShareTicket: true
-    });
-    if (this.$route.query && this.$route.query.sId && this.$route.query.gId) {
-      this.sId = this.$route.query.sId;
-      this.gId = this.$route.query.gId;
-      // console.log(this.$route.query.sName);
-      this.sName= decodeURI(this.$route.query.sName);
-      // console.log(this.sName);
-      var rep = await this.$ShoppingAPI.Goods_Get({
-        sId: this.sId,
-        gId: this.gId
-      });
-      if (rep.ret == 0) {
-        this.goods_detail = rep.data;
-         console.log(this.goods_detail);
-      }
+  mounted() {
+    let that = this;
+    if (this.isMP) {
+      that.$ShoppingAPI
+        .baidu_geocoder({ location: `${that.shopDetail.Latitude},${that.shopDetail.Longitude}`,coordtype:'bd09ll',ret_coordtype:'gcj02ll' })
+        .then(rep2 => {
+          if (rep2.status == 0) {
+            that.gcj02.latitude = rep2.result.location.lat;
+            that.gcj02.longitude = rep2.result.location.lng;
+          }
+        });
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.goods {
-  background: #ecf0f1;
-  & > div {
-    background: #fff;
-    padding: 10px;
-  }
-  .goods-info {
-    margin-bottom: 10px;
-    .goods-item-price {
-      font-size: 30px;
-      color: #ff5252;
-      .original {
-        margin-left: 10px;
-        color: #a2a2a2;
-        font-size: 17px;
-        text-decoration: line-through;
+ul.shop-detail-info {
+  > li {
+    border-bottom: 1px solid #d6d6d6;
+    padding: 0.32rem 0;
+    line-height: 0.4rem;
+    i {
+      font-size: 20px;
+      display: inline-block;
+      vertical-align: top;
+      margin: 0 10px;
+    }
+    ul {
+      display: inline-block;
+      li {
+        float: left;
+        margin-top: 10px;
       }
     }
-    .goods-name {
-      color: #021218;
-      font-size: 22px;
+    i.icon {
+      vertical-align: initial;
+      font-size: 0.45rem;
     }
-    .goods-item-info {
-      font-size: 17px;
-      text-align: center;
-      color: #a2a2a2;
-      p {
-        color: #ff5252;
-        display: inline-block;
-        margin-left: 5px;
-      }
+    span {
+      color: #444444;
+      font-size: 13px;
     }
-  }
-  .goods-items {
-    margin-bottom: 10px;
-    font-size: 18px;
-    & > div > span {
-      color: #5c5c5c;
-    }
-    .goods-items-show {
-      ul {
-        display: inline-block;
-        li.action {
-          border-color: #12b7f5;
-          color: #12b7f5;
-        }
-        li {
-          border: 1px solid #a2a2a2;
-          margin: 5px 0 0 5px;
-          padding: 1px 3px;
-          display: inline-block;
-        }
-      }
+    img {
+      width: 2.59rem;
+      height: 2.59rem;
+      margin: 0 0 0 0.52rem;
     }
   }
-  .goods-detail{
-      .goods-detail-title{
-          color: #5c5c5c;
-          font-size: 18px;
-          padding-bottom: 5px;
-          border-bottom: 1px solid #12b7f5;
-          span{
-              border-left: 3px solid #12b7f5;
-              padding-left:5px;
-              line-height: 24px;
-              
-          }
-      }
-      .goods-detail-prop{
-          font-size: 18px;
-          color:#a2a2a2;
-          margin: 5px 0;
-      }
+  > li:last-child {
+    border: none;
   }
 }
 </style>

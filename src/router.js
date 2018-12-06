@@ -8,14 +8,6 @@ var routes = [
           },
     },
     {
-        path: 'pages/index/index',
-        name: 'index',
-        config: {
-            navigationBarTitleText: 'APP授权',
-            enablePullDownRefresh: false
-          },
-    },
-    {
         path: 'pages/home/index',
         name: 'home',
         config: {
@@ -41,12 +33,21 @@ var routes = [
     },
     {
         path:'pages/shop/detail',
-        name:'good',
+        name:'shopdetail',
+        config: {
+            navigationBarTitleText: '店铺详情',
+            enablePullDownRefresh: false
+        }
+    },
+    {
+        path:'pages/shop/good-detail',
+        name:'good-detail',
         config: {
             navigationBarTitleText: '商品详情',
             enablePullDownRefresh: false
         }
     },
+    
     {
         path:'pages/order/settle',
         name:'settle',

@@ -6,14 +6,17 @@
       </div>
       <div class="shop-simple-info">
         <p class="shop-detail-name">{{shopDetail.sName}}</p>
-        <p class="shop-detail-notice">店铺公告：
+        <p class="shop-detail-notice">
+          店铺公告：
           <span>{{shopDetail.Notice}}</span>
         </p>
         <div class="shop-detail-statistics">
-          <p class="shop-detail-statistics-sales">本店销量：
+          <p class="shop-detail-statistics-sales">
+            本店销量：
             <span>{{shopDetail.Sales}}</span>
           </p>
-          <p class="shop-detail-statistics-goods">商品数：
+          <p class="shop-detail-statistics-goods">
+            商品数：
             <span>{{shopDetail.GoodsCount}}</span>
           </p>
         </div>
@@ -35,7 +38,8 @@
               </li>
             </ul>
             <ul class="shop-detail-tab-goods-list">
-              <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail" @click="go({path:'/pages/shop/detail',query:{sId:item.sId,gId:item.gId,sName:shopDetail.sName}})">
+              <!-- <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail" @click="go({path:'/pages/shop/good-detail',query:{sId:item.sId,gId:item.gId,sName:shopDetail.sName}})"> -->
+              <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail">               
                 <div class="shop-detail-tab-goods-logo">
                   <img :src="item.Images[0].Thumbnail_url">
                 </div>
@@ -47,8 +51,8 @@
                   </p>
                   <div>
                     <p class="shop-detail-tab-goods-Price">￥{{item.Price}}</p>
-                    <span v-if="item.Goods_Items.length>1" class="shop-detail-tab-goods-choose">选规格</span>
-                    <buy v-else :goods="item.Goods_Items[0]" :image="item.Images[0].Thumbnail_url" :sName="shopDetail.sName"></buy>
+                    <!-- <span v-if="item.Goods_Items.length>1" class="shop-detail-tab-goods-choose">选规格</span> -->
+                    <!-- <buy v-else :goods="item.Goods_Items[0]" :image="item.Images[0].Thumbnail_url" :sName="shopDetail.sName"></buy> -->
                   </div>
                 </div>
               </li>
@@ -57,20 +61,39 @@
         </div>
         <div :hidden="activeIndex != 1">
           <ul class="shop-detail-info">
-            <li><i class="icon">&#xe61f;</i><span>{{shopDetail.Address}}</span></li>
-            <li><i class="icon">&#xe654;</i><span>查看相关证件</span></li>
-            <li><i class="icon">&#xe628;</i><span>主营：{{shopDetail.MainType}}</span></li>
-            <li><i class="icon">&#xe60a;</i><span>{{shopDetail.Mobile}}&nbsp;{{shopDetail.Tel}}</span></li>
-            <li><i class="icon">&#xe623;</i><span>{{shopDetail.Notice}}</span></li>
-            <li><i class="icon">店铺图片</i>
+            <li @click="openLocation">
+              <i class="icon">&#xe61f;</i>
+              <span>{{shopDetail.Address}}</span>
+            </li>
+            <li @click="previewImage(shopDetail.License[0],shopDetail.License)">
+              <i class="icon">&#xe654;</i>
+              <span>查看相关证件</span>
+            </li>
+            <li>
+              <i class="icon">&#xe628;</i>
+              <span>主营：{{shopDetail.MainTypeName}}</span>
+            </li>
+            <li>
+              <i class="icon">&#xe60a;</i>
+              <span @click="makePhoneCall(shopDetail.Mobile)">{{shopDetail.Mobile}}</span>&nbsp;<span @click="makePhoneCall(shopDetail.Tel)">{{shopDetail.Tel}}</span>
+            </li>
+            <li>
+              <i class="icon">&#xe623;</i>
+              <span>{{shopDetail.Notice}}</span>
+            </li>
+            <li>
+              <i class="icon">店铺图片</i>
               <ul>
                 <li v-for="(item,index) in shopDetail.ShopImages" :key="index">
                   <!-- <img mode="widthFix" :src="item.ThumbnailUrl"> -->
-                  <img :src="item.ThumbnailUrl">
+                  <img :src="item.ThumbnailUrl" @click="previewImage(item,shopDetail.ShopImages)">
                 </li>
               </ul>
             </li>
-            <li><i class="icon">店铺简介</i><span>{{shopDetail.Brief}}</span></li>
+            <li>
+              <i class="icon">店铺简介</i>
+              <span>{{shopDetail.Brief}}</span>
+            </li>
           </ul>
         </div>
         <div :hidden="activeIndex != 2">
@@ -78,24 +101,27 @@
         </div>
       </div>
     </div>
-    <shoppingCar :sId="sId"></shoppingCar>
+    <!-- <shoppingCar :sId="sId"></shoppingCar> -->
   </div>
 </template>
 <script>
 import buy from "@/components/buy";
 import shoppingCar from "@/components/shoppingCarToolbar";
-
-import {mapGetters,mapMutations } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   data() {
     return {
       sId: "",
-      shopDetail: {},
+      // shopDetail: {},
       goodList: [],
       GoodsType: [],
       Tabs: [],
       activeIndex: 0,
-      activeType: 0
+      activeType: 0,
+      gcj02: {
+        latitude: 0,
+        longitude: 0
+      }
     };
   },
   components: {
@@ -105,9 +131,38 @@ export default {
   computed: {
     navbarSliderClass() {
       return "navbar_slider_" + this.activeIndex;
+    },
+    shopDetail() {
+      return this.$store.state.Shop.ShopDetail;
     }
   },
   methods: {
+    openLocation() {
+      var that = this;
+      wx.openLocation({
+        latitude: that.gcj02.latitude,
+        longitude: that.gcj02.longitude,
+        scale: 18
+      });
+    },
+    previewImage(item,images) {
+      if (this.isMP) {
+        let urls = images.map(item => {
+          return item.ImgUrl;
+        });
+        wx.previewImage({
+          current: item.ImgUrl, // 当前显示图片的http链接
+          urls // 需要预览的图片http链接列表
+        });
+      }
+    },
+    makePhoneCall(phoneNumber){
+      if(this.isMP){
+        wx.makePhoneCall({
+          phoneNumber: phoneNumber
+        })
+      }
+    },
     async tabClick(tab, e) {
       if (e) this.activeIndex = e.currentTarget.id;
     },
@@ -117,40 +172,44 @@ export default {
         if (typeid > 1) return item.TypeId.indexOf(typeid) > -1;
         else return item.TypeId.length == 0;
       });
-    }
+    },
+    ...mapActions(["GetShopDetail"]) //`this.$store.dispatch('GetUserAddressList')`
   },
-  onShareAppMessage (result) {
+  onShareAppMessage(result) {
     let title = this.shopDetail.sName;
-    let path = `/pages/shop/index?sId=${this.sId}`
+    let path = `/pages/shop/index?sId=${this.sId}`;
     return {
       title,
       path
-    }
+    };
   },
-  onLoad (query) {
-    // scene 需要使用 decodeURIComponent 才能获取到生成二维码时传入的 scene
-    if(this.extConfig&&this.extConfig.sId)
-      this.sId = this.extConfig.sId;
+  onLoad(query) {
+    // 获取extConfig中的sId
+    if (this.extConfig && this.extConfig.sId) this.sId = this.extConfig.sId;
     wx.showShareMenu({
       withShareTicket: true
     });
   },
+  async created(){
+    if (this.extConfig && this.extConfig.sId)
+    this.sId = this.extConfig.sId;
+    
+  },
   async mounted() {
-
+    await this.GetShopDetail(this.sId); //获取店铺详情
+    let that = this;
     this.activeIndex = 0;
     this.Tabs = [
-      { name: "商品", type: "1", checked: true },
+      { name: "分类", type: "1", checked: true }
       // { name: "评价", type: "2", checked: true },
-      { name: "商家", type: "3", checked: true }
+      // { name: "商家", type: "3", checked: true }
     ];
     this.goodList = [];
-    if (this.sId||(this.$route.query && this.$route.query.sId.length > 0) ) {
-      this.sId =this.sId|| this.$route.query.sId;
-      var rep = await this.$ShoppingAPI.Shop_GetDetails({ sId: this.sId }); //获取店铺详情
-
-      if (rep.ret == 0) {
-        this.shopDetail = rep.data;
-        if(this.isMP) wx.setNavigationBarTitle({title:this.shopDetail.sName});
+    if (this.sId || (this.$route.query && this.$route.query.sId.length > 0)) {
+      // var rep = await this.$ShoppingAPI.Shop_GetDetails({ sId: this.sId });
+      if (this.shopDetail.sName) {
+        if (this.isMP)
+          wx.setNavigationBarTitle({ title: this.shopDetail.sName });
         // this.Tabs[1].name += `(${this.shopDetail.CommentCount})`; //绑定评价数量
       }
       var rep3 = await this.$ShoppingAPI.Goods_GetByShop({ sId: this.sId }); //获取店铺商品
@@ -162,6 +221,18 @@ export default {
         this.GoodsType = rep2.data;
         this.GoodsType.push({ Sort: "0", TypeId: "-1", TypeName: "其他" });
         this.changeGoodsType(this.GoodsType[0].TypeId);
+      }
+
+      if (this.isMP) {
+        //copy到此处的代码,由于店铺详情领开一个页面,可以删除
+        that.$ShoppingAPI
+          .baidu_geocoder({ location: `${that.shopDetail.Latitude},${that.shopDetail.Longitude}`,coordtype:'bd09ll',ret_coordtype:'gcj02ll' })
+          .then(rep2 => {
+            if (rep2.status == 0) {
+              that.gcj02.latitude = rep2.result.location.lat;
+              that.gcj02.longitude = rep2.result.location.lng;
+            }
+          });
       }
     }
   }
@@ -175,17 +246,20 @@ export default {
     padding: 20px 5px 0 10px;
     color: #fff;
     .shop-detail-logo {
-      width: 24%;
+      width: 2.46rem;
       position: relative;
       img {
-        width: 100%;
-        height: 80px;
+        // width: 100%;
+        // height: 80px;
+        width: 2.46rem;
+        height: 2.46rem;
         position: absolute;
+        border-radius: 10%;
       }
     }
     .shop-simple-info {
       padding-left: 10px;
-      width: 71%;
+      width: 70%;
       .shop-detail-name {
         font-family: PingFangSC-Regular, sans-serif;
         font-size: 20px;
@@ -247,14 +321,16 @@ export default {
         .shop-detail-tab-goods-detail {
           margin-top: 10px;
           .shop-detail-tab-goods-logo {
-            width: 25%;
             img {
-              width: 100%;
-              height: 70px;
+              // width: 100%;
+              // height: 70px;
+              width: 2.16rem;
+              height: 2.16rem;
+              border: 1px solid #d6d6d6;
             }
           }
           .shop-detail-tab-goods-info {
-            width: 70%;
+            width: 65%;
             margin-left: 5px;
             .shop-detail-tab-goods-title {
               font-size: 15px;
@@ -285,6 +361,7 @@ export default {
               border: 1px solid;
               border-radius: 10px;
               padding: 0 4px;
+              font-size: 0.44rem;
             }
           }
           .shop-detail-tab-goods-logo,
@@ -304,6 +381,7 @@ export default {
       > li {
         border-bottom: 1px solid #d6d6d6;
         padding: 7px 0;
+        line-height: 0.4rem;
         i {
           font-size: 20px;
           display: inline-block;
@@ -314,21 +392,25 @@ export default {
           display: inline-block;
           li {
             float: left;
+            margin-top: 10px;
           }
         }
         i.icon {
           vertical-align: initial;
-          font-size: 20px;
+          font-size: 0.45rem;
         }
         span {
           color: #444444;
           font-size: 13px;
         }
         img {
-          width: 87px;
-          height: 87px;
+          width: 2.59rem;
+          height: 2.59rem;
           margin: 0 0 0 5px;
         }
+      }
+      > li:last-child {
+        border: none;
       }
     }
   }
@@ -340,6 +422,7 @@ export default {
   width: 100%;
   border-bottom: 1rpx solid #ccc;
   position: relative;
+  font-size: 0.41rem;
 }
 
 .navbar_item {
@@ -357,7 +440,7 @@ export default {
   display: inline-block;
 }
 .navbar-body {
-  margin-top: 10px;
+  // margin-top: 10px;
 }
 .navbar_slider {
   position: absolute;

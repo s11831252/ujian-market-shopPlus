@@ -131,7 +131,7 @@ export default {
   },
   created() {
     //1. 调用wx.login
-    this.wx_login();
+    // this.wx_login();
   }
 };
 </script>

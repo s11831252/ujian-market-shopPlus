@@ -7,7 +7,7 @@
         <div class="my-info">
             <p>{{UserInfo.UserName}}</p>
             <p>手机号码：{{UserInfo.Phone}}</p>
-            <ul class="my-info-vital">
+            <!-- <ul class="my-info-vital">
                 <li>
                     <p class="vital-value">0.00元</p>
                     <p class="vital-title">我的钱包</p>
@@ -20,9 +20,9 @@
                     <p class="vital-value">0分</p>
                     <p class="vital-title">我的积分</p>
                 </li>
-            </ul>
+            </ul> -->
             <ul class="my-info-action">
-                <li>
+                <!-- <li>
                     <p><i class="icon icon-sh">&#xe65e;</i>收货地址<i class="icon right">&#xe601;</i></p>
                 </li>
                 <li>
@@ -36,7 +36,7 @@
                 </li>
                 <li>
                     <p><i class="icon icon-tsjy">&#xe64c;</i>投诉与建议<i class="icon right">&#xe601;</i></p>
-                </li>
+                </li> -->
                 <li @click="exit" >
                     <p><i class="icon icon-tc">&#xe609;</i>退出登录<i class="icon right">&#xe601;</i></p>
                 </li>
