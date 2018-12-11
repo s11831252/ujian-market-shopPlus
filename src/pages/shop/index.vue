@@ -2,10 +2,10 @@
   <div class="shop-detail">
     <div class="shop-detail-head">
       <div class="shop-detail-logo">
-        <img :src="shopDetail.sLogo">
+        <img :src="extConfig.sLogo">
       </div>
       <div class="shop-simple-info">
-        <p class="shop-detail-name">{{shopDetail.sName}}</p>
+        <p class="shop-detail-name">{{extConfig.sName}}</p>
         <p class="shop-detail-notice">
           店铺公告：
           <span>{{shopDetail.Notice}}</span>
@@ -33,13 +33,18 @@
         <div :hidden="activeIndex != 0">
           <div class="shop-detail-tab-goods">
             <ul class="shop-detail-tab-goods-types">
-              <li v-for="(item,index) in GoodsType " :key="index" :class="{'active': item.TypeId==activeType}" @click="changeGoodsType(item.TypeId)">
+              <li v-for="(item,index) in FilterGoodsType " :key="index" :class="{'active': item.TypeId==activeType}" @click="changeGoodsType(item.TypeId)">
                 <p>{{item.TypeName}}</p>
               </li>
             </ul>
             <ul class="shop-detail-tab-goods-list">
-              <!-- <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail" @click="go({path:'/pages/shop/good-detail',query:{sId:item.sId,gId:item.gId,sName:shopDetail.sName}})"> -->
-              <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail">               
+              <li
+                v-for="(item,index) in goodList"
+                :key="index"
+                class="shop-detail-tab-goods-detail"
+                @click="go({path:'/pages/shop/good-detail',query:{sId:item.sId,gId:item.gId,sName:shopDetail.sName}})"
+              >
+                <!-- <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail">                -->
                 <div class="shop-detail-tab-goods-logo">
                   <img :src="item.Images[0].Thumbnail_url">
                 </div>
@@ -75,7 +80,8 @@
             </li>
             <li>
               <i class="icon">&#xe60a;</i>
-              <span @click="makePhoneCall(shopDetail.Mobile)">{{shopDetail.Mobile}}</span>&nbsp;<span @click="makePhoneCall(shopDetail.Tel)">{{shopDetail.Tel}}</span>
+              <span @click="makePhoneCall(shopDetail.Mobile)">{{shopDetail.Mobile}}</span>&nbsp;
+              <span @click="makePhoneCall(shopDetail.Tel)">{{shopDetail.Tel}}</span>
             </li>
             <li>
               <i class="icon">&#xe623;</i>
@@ -134,6 +140,25 @@ export default {
     },
     shopDetail() {
       return this.$store.state.Shop.ShopDetail;
+    },
+    FilterGoodsType() {
+      var that = this;
+      var list = that.GoodsType.filter(item => {
+        if (item.TypeId > 0) {
+          if (!that.shopDetail.Goods) return false;
+          var goods = that.shopDetail.Goods.find(v => {
+            return v.TypeId.indexOf(item.TypeId) >= 0;
+          });
+          return goods != null;
+        } else {
+          if (!that.shopDetail.Goods) return false;
+          var goods = that.shopDetail.Goods.find(v => {
+            return v.TypeId.length == 0;
+          });
+          return goods != null;
+        }
+      });
+      return list;
     }
   },
   methods: {
@@ -145,7 +170,7 @@ export default {
         scale: 18
       });
     },
-    previewImage(item,images) {
+    previewImage(item, images) {
       if (this.isMP) {
         let urls = images.map(item => {
           return item.ImgUrl;
@@ -156,11 +181,11 @@ export default {
         });
       }
     },
-    makePhoneCall(phoneNumber){
-      if(this.isMP){
+    makePhoneCall(phoneNumber) {
+      if (this.isMP) {
         wx.makePhoneCall({
           phoneNumber: phoneNumber
-        })
+        });
       }
     },
     async tabClick(tab, e) {
@@ -173,6 +198,51 @@ export default {
         else return item.TypeId.length == 0;
       });
     },
+    async init(refresh) {
+      await this.GetShopDetail({ sId: this.sId, refresh }); //获取店铺详情
+      if (
+        this.sId ||
+        (this.$route.query && this.$route.query.sId.length > 0) ||
+        this.shopDetail.sId
+      ) {
+        // var rep = await this.$ShoppingAPI.Shop_GetDetails({ sId: this.sId });
+        if (this.shopDetail.sName) {
+          if (this.isMP)
+            wx.setNavigationBarTitle({ title: this.extConfig.sName });
+          // this.Tabs[1].name += `(${this.shopDetail.CommentCount})`; //绑定评价数量
+        }
+        var rep3 = await this.$ShoppingAPI.Goods_GetByShop({ sId: this.sId }); //获取店铺商品
+        if (rep3.ret == 0) {
+          this.shopDetail.Goods = rep3.data;
+        }
+        var rep2 = await this.$ShoppingAPI.CustomGoodsType_Get({
+          sId: this.sId
+        }); //获取店铺商品分类
+        if (rep2.ret == 0) {
+          this.GoodsType = rep2.data;
+          this.GoodsType.push({ Sort: "0", TypeId: "-1", TypeName: "其他" });
+          this.changeGoodsType(this.GoodsType[0].TypeId);
+        }
+
+        if (this.isMP) {
+          //copy到此处的代码,由于店铺详情领开一个页面,可以删除
+          that.$ShoppingAPI
+            .baidu_geocoder({
+              location: `${that.shopDetail.Latitude},${
+                that.shopDetail.Longitude
+              }`,
+              coordtype: "bd09ll",
+              ret_coordtype: "gcj02ll"
+            })
+            .then(rep2 => {
+              if (rep2.status == 0) {
+                that.gcj02.latitude = rep2.result.location.lat;
+                that.gcj02.longitude = rep2.result.location.lng;
+              }
+            });
+        }
+      }
+    },
     ...mapActions(["GetShopDetail"]) //`this.$store.dispatch('GetUserAddressList')`
   },
   onShareAppMessage(result) {
@@ -183,6 +253,10 @@ export default {
       path
     };
   },
+  onPullDownRefresh() {
+    this.init(true);
+    wx.stopPullDownRefresh();
+  },
   onLoad(query) {
     // 获取extConfig中的sId
     if (this.extConfig && this.extConfig.sId) this.sId = this.extConfig.sId;
@@ -190,13 +264,10 @@ export default {
       withShareTicket: true
     });
   },
-  async created(){
-    if (this.extConfig && this.extConfig.sId)
-    this.sId = this.extConfig.sId;
-    
+  async created() {
+    if (this.extConfig && this.extConfig.sId) this.sId = this.extConfig.sId;
   },
   async mounted() {
-    await this.GetShopDetail(this.sId); //获取店铺详情
     let that = this;
     this.activeIndex = 0;
     this.Tabs = [
@@ -205,36 +276,7 @@ export default {
       // { name: "商家", type: "3", checked: true }
     ];
     this.goodList = [];
-    if (this.sId || (this.$route.query && this.$route.query.sId.length > 0)) {
-      // var rep = await this.$ShoppingAPI.Shop_GetDetails({ sId: this.sId });
-      if (this.shopDetail.sName) {
-        if (this.isMP)
-          wx.setNavigationBarTitle({ title: this.shopDetail.sName });
-        // this.Tabs[1].name += `(${this.shopDetail.CommentCount})`; //绑定评价数量
-      }
-      var rep3 = await this.$ShoppingAPI.Goods_GetByShop({ sId: this.sId }); //获取店铺商品
-      if (rep3.ret == 0) {
-        this.shopDetail.Goods = rep3.data;
-      }
-      var rep2 = await this.$ShoppingAPI.CustomGoodsType_Get({ sId: this.sId }); //获取店铺商品分类
-      if (rep2.ret == 0) {
-        this.GoodsType = rep2.data;
-        this.GoodsType.push({ Sort: "0", TypeId: "-1", TypeName: "其他" });
-        this.changeGoodsType(this.GoodsType[0].TypeId);
-      }
-
-      if (this.isMP) {
-        //copy到此处的代码,由于店铺详情领开一个页面,可以删除
-        that.$ShoppingAPI
-          .baidu_geocoder({ location: `${that.shopDetail.Latitude},${that.shopDetail.Longitude}`,coordtype:'bd09ll',ret_coordtype:'gcj02ll' })
-          .then(rep2 => {
-            if (rep2.status == 0) {
-              that.gcj02.latitude = rep2.result.location.lat;
-              that.gcj02.longitude = rep2.result.location.lng;
-            }
-          });
-      }
-    }
+    await this.init();
   }
 };
 </script>

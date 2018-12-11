@@ -12,7 +12,7 @@ Vue.prototype.$store = store;
 Vue.mixin({
     data(){
         return {
-            extConfig:{},
+            
         }
     },
     computed: {
@@ -21,6 +21,9 @@ Vue.mixin({
         },
         isMP(){
             return true;
+        },
+        extConfig(){
+            return wx.getExtConfigSync? wx.getExtConfigSync(): {};
         }
     },
     methods: {
@@ -49,14 +52,14 @@ Vue.mixin({
          Object.assign(this, this.$options.data())
     },
     created: function () {
-        if(this.extConfig&&this.extConfig.sId)
-        {
+        // if(this.extConfig&&this.extConfig.sId)
+        // {
 
-        }else
-        {
-            let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
-            this.extConfig=extConfig;
-        }
+        // }else
+        // {
+        //     let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
+        //     this.extConfig=extConfig;
+        // }
         // console.log(this.extConfig)
     }
 });

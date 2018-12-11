@@ -4,7 +4,7 @@
         <div class="goods">
             <div class="goods-info">
                 <p class="goods-item-price">￥{{selectedItem.Price}}
-                    <span class="original">原价{{selectedItem.MarketingPrice}}</span>
+                    <!-- <span class="original">原价{{selectedItem.MarketingPrice}}</span> -->
                 </p>
                 <p class="goods-name">{{goods_detail.gName}}</p>
                 <div class="goods-item-info">
@@ -49,7 +49,7 @@
                     <span>商品参数</span>
                 </p>
                 <div class="goods-detail-content">
-
+                  <wxParse :content="goods_detail.gDetailed" @preview="preview" @navigate="navigate" />
                 </div>
             </div>
         </div>
@@ -60,6 +60,8 @@
 import swipeWeb from "@/components/swiper";
 import buy from "@/components/buy";
 import shoppingCar from "@/components/shoppingCarToolbar";
+import wxParse from 'mpvue-wxparse'
+
 export default {
   data() {
     return {
@@ -103,7 +105,8 @@ export default {
   components: {
     swipeWeb,
     buy,
-    shoppingCar
+    shoppingCar,
+    wxParse
   },
   async mounted() {
     wx.showShareMenu({
@@ -129,6 +132,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import url("~mpvue-wxparse/src/wxParse.css");
 .goods {
   background: #ecf0f1;
   & > div {

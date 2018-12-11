@@ -4,7 +4,7 @@ var routes = [
         name: 'shop',
         config: {
             navigationBarTitleText: '店铺主页',
-            enablePullDownRefresh: false
+            enablePullDownRefresh: true
           },
     },
     {

@@ -222,10 +222,14 @@ export default new Vuex.Store({//store对象
         }
       },
       actions: {
-        async GetShopDetail (context,sId) {
-          var rep = await ShoppingAPI.Shop_GetDetails({sId});
-          if(rep.ret==0)
-            context.commit('GetShopDetail',rep.data);
+        async GetShopDetail (context,payload) {
+          var arr = Object.getOwnPropertyNames(context.state.ShopDetail);
+          if(payload.refresh||arr.length == 0)
+          {
+            var rep = await ShoppingAPI.Shop_GetDetails({sId:payload.sId});
+            if(rep.ret==0)
+              context.commit('GetShopDetail',rep.data);
+          }
         }
       }
     }

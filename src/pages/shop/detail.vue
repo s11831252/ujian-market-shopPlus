@@ -79,6 +79,14 @@ export default {
       }
     }
   },
+  onShareAppMessage(result) {
+    let title = this.shopDetail.sName;
+    let path = `/pages/shop/index?sId=${this.shopDetail.sId}`;
+    return {
+      title,
+      path
+    };
+  },
   mounted() {
     let that = this;
     if (this.isMP) {
