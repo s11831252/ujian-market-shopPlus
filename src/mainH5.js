@@ -15,6 +15,14 @@ Vue.mixin({
   computed: {
     isMP(){
         return false;
+    },
+    extConfig() {
+      return {
+        "sName": "水电建材汇",
+        "sLogo":"http://wx.qlogo.cn/mmopen/eTOoibR3VocHTbpuR2Q8KdP0ibrsT7mInvfyoLaQs3F4Q0wuUlGtJlYTWMVR7FfNvauvRavz02OoMiayZyZ6KkYcericMicqMh3Ss/0",
+        "sId":"E483F458-7FB4-4FC2-BE39-001E644962BA",
+        "appid":"wxf1850ddc593ea296"
+      }
     }
   },
   methods: {
@@ -23,7 +31,7 @@ Vue.mixin({
       },
       toast(title){
         this.$toast.center(title);
-      }
+      },
     }
 });
 Vue.config.productionTip = false

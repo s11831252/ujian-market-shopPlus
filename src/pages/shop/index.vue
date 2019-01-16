@@ -36,88 +36,28 @@
               <li v-for="(item,index) in FilterGoodsType " :key="index" :class="{'active': item.TypeId==activeType}" @click="changeGoodsType(item.TypeId)">
                 <p>{{item.TypeName}}</p>
               </li>
-            </ul>
-            <ul class="shop-detail-tab-goods-list">
-              <li
-                v-for="(item,index) in goodList"
-                :key="index"
-                class="shop-detail-tab-goods-detail"
-                @click="go({path:'/pages/shop/good-detail',query:{sId:item.sId,gId:item.gId,sName:shopDetail.sName}})"
-              >
-                <!-- <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail">                -->
-                <div class="shop-detail-tab-goods-logo">
-                  <img :src="item.Images[0].Thumbnail_url">
-                </div>
-                <div class="shop-detail-tab-goods-info">
-                  <p class="shop-detail-tab-goods-title">{{item.gName}}</p>
-                  <p class="shop-detail-tab-goods-statistics">
-                    <span>月售{{item.Sales}}</span>
-                    <span>评论{{item.CommentCount}}</span>
-                  </p>
-                  <div>
-                    <p class="shop-detail-tab-goods-Price">￥{{item.Price}}</p>
-                    <!-- <span v-if="item.Goods_Items.length>1" class="shop-detail-tab-goods-choose">选规格</span> -->
-                    <!-- <buy v-else :goods="item.Goods_Items[0]" :image="item.Images[0].Thumbnail_url" :sName="shopDetail.sName"></buy> -->
-                  </div>
-                </div>
+            </ul><ul class="shop-detail-tab-goods-list">
+              <li v-for="(item,index) in goodList" :key="index" class="shop-detail-tab-goods-detail" @click="go({path:'/pages/shop/good-detail',query:{sId:item.sId,gId:item.gId,sName:shopDetail.sName}})">
+                <indexGoodDetail :goodsInfo="item" :sName="shopDetail.sName"></indexGoodDetail>
               </li>
             </ul>
           </div>
         </div>
-        <div :hidden="activeIndex != 1">
-          <ul class="shop-detail-info">
-            <li @click="openLocation">
-              <i class="icon">&#xe61f;</i>
-              <span>{{shopDetail.Address}}</span>
-            </li>
-            <li @click="previewImage(shopDetail.License[0],shopDetail.License)">
-              <i class="icon">&#xe654;</i>
-              <span>查看相关证件</span>
-            </li>
-            <li>
-              <i class="icon">&#xe628;</i>
-              <span>主营：{{shopDetail.MainTypeName}}</span>
-            </li>
-            <li>
-              <i class="icon">&#xe60a;</i>
-              <span @click="makePhoneCall(shopDetail.Mobile)">{{shopDetail.Mobile}}</span>&nbsp;
-              <span @click="makePhoneCall(shopDetail.Tel)">{{shopDetail.Tel}}</span>
-            </li>
-            <li>
-              <i class="icon">&#xe623;</i>
-              <span>{{shopDetail.Notice}}</span>
-            </li>
-            <li>
-              <i class="icon">店铺图片</i>
-              <ul>
-                <li v-for="(item,index) in shopDetail.ShopImages" :key="index">
-                  <!-- <img mode="widthFix" :src="item.ThumbnailUrl"> -->
-                  <img :src="item.ThumbnailUrl" @click="previewImage(item,shopDetail.ShopImages)">
-                </li>
-              </ul>
-            </li>
-            <li>
-              <i class="icon">店铺简介</i>
-              <span>{{shopDetail.Brief}}</span>
-            </li>
-          </ul>
-        </div>
-        <div :hidden="activeIndex != 2">
-          <h1>商家信息正在开发中</h1>
-        </div>
       </div>
     </div>
     <!-- <shoppingCar :sId="sId"></shoppingCar> -->
+    <customService></customService>
   </div>
 </template>
 <script>
-import buy from "@/components/buy";
 import shoppingCar from "@/components/shoppingCarToolbar";
+import customService from "@/components/customService";
+import indexGoodDetail from "./index-good-detail";
+
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      sId: "",
       // shopDetail: {},
       goodList: [],
       GoodsType: [],
@@ -131,8 +71,9 @@ export default {
     };
   },
   components: {
-    buy,
-    shoppingCar
+    shoppingCar,
+    customService,
+    indexGoodDetail
   },
   computed: {
     navbarSliderClass() {
@@ -199,55 +140,32 @@ export default {
       });
     },
     async init(refresh) {
-      await this.GetShopDetail({ sId: this.sId, refresh }); //获取店铺详情
-      if (
-        this.sId ||
-        (this.$route.query && this.$route.query.sId.length > 0) ||
-        this.shopDetail.sId
-      ) {
-        // var rep = await this.$ShoppingAPI.Shop_GetDetails({ sId: this.sId });
-        if (this.shopDetail.sName) {
-          if (this.isMP)
+      console.log(`init:`,this.extConfig);
+      await this.GetShopDetail({ sId: this.extConfig.sId, refresh }); //获取店铺详情
+      if (this.extConfig.sId) {
+        if (this.shopDetail.sName&&this.isMP) {
             wx.setNavigationBarTitle({ title: this.extConfig.sName });
           // this.Tabs[1].name += `(${this.shopDetail.CommentCount})`; //绑定评价数量
         }
-        var rep3 = await this.$ShoppingAPI.Goods_GetByShop({ sId: this.sId }); //获取店铺商品
+        var rep3 = await this.$ShoppingAPI.Goods_GetByShop({ sId: this.extConfig.sId }); //获取店铺商品
         if (rep3.ret == 0) {
           this.shopDetail.Goods = rep3.data;
         }
         var rep2 = await this.$ShoppingAPI.CustomGoodsType_Get({
-          sId: this.sId
+          sId: this.extConfig.sId
         }); //获取店铺商品分类
         if (rep2.ret == 0) {
           this.GoodsType = rep2.data;
           this.GoodsType.push({ Sort: "0", TypeId: "-1", TypeName: "其他" });
           this.changeGoodsType(this.GoodsType[0].TypeId);
         }
-
-        if (this.isMP) {
-          //copy到此处的代码,由于店铺详情领开一个页面,可以删除
-          that.$ShoppingAPI
-            .baidu_geocoder({
-              location: `${that.shopDetail.Latitude},${
-                that.shopDetail.Longitude
-              }`,
-              coordtype: "bd09ll",
-              ret_coordtype: "gcj02ll"
-            })
-            .then(rep2 => {
-              if (rep2.status == 0) {
-                that.gcj02.latitude = rep2.result.location.lat;
-                that.gcj02.longitude = rep2.result.location.lng;
-              }
-            });
-        }
       }
     },
-    ...mapActions(["GetShopDetail"]) //`this.$store.dispatch('GetUserAddressList')`
+    ...mapActions(["GetShopDetail"]) //`this.$store.dispatch('GetShopDetail')`
   },
   onShareAppMessage(result) {
-    let title = this.shopDetail.sName;
-    let path = `/pages/shop/index?sId=${this.sId}`;
+    let title = this.extConfig.sName||this.shopDetail.sName;
+    let path = `/pages/shop/index?sId=${this.extConfig.sId}`;
     return {
       title,
       path
@@ -258,14 +176,11 @@ export default {
     wx.stopPullDownRefresh();
   },
   onLoad(query) {
-    // 获取extConfig中的sId
-    if (this.extConfig && this.extConfig.sId) this.sId = this.extConfig.sId;
     wx.showShareMenu({
       withShareTicket: true
     });
   },
   async created() {
-    if (this.extConfig && this.extConfig.sId) this.sId = this.extConfig.sId;
   },
   async mounted() {
     let that = this;
@@ -301,7 +216,7 @@ export default {
     }
     .shop-simple-info {
       padding-left: 10px;
-      width: 70%;
+      width: 69%;
       .shop-detail-name {
         font-family: PingFangSC-Regular, sans-serif;
         font-size: 20px;
@@ -359,63 +274,15 @@ export default {
         }
       }
       .shop-detail-tab-goods-list {
-        width: 70%;
+        width: 74%;
         .shop-detail-tab-goods-detail {
           margin-top: 10px;
-          .shop-detail-tab-goods-logo {
-            img {
-              // width: 100%;
-              // height: 70px;
-              width: 2.16rem;
-              height: 2.16rem;
-              border: 1px solid #d6d6d6;
-            }
-          }
-          .shop-detail-tab-goods-info {
-            width: 65%;
-            margin-left: 5px;
-            .shop-detail-tab-goods-title {
-              font-size: 15px;
-              color: #1b1b1b;
-              margin-bottom: 6px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            }
-            .shop-detail-tab-goods-statistics {
-              font-size: 13px;
-              color: #979797;
-              margin-bottom: 6px;
-              span {
-                margin-right: 10px;
-              }
-            }
-            .shop-detail-tab-goods-Price {
-              font-size: 17px;
-              color: #ff5252;
-              display: inline-block;
-              vertical-align: top;
-            }
-            .shop-detail-tab-goods-choose {
-              display: inline-block;
-              float: right;
-              color: #fccb5c;
-              border: 1px solid;
-              border-radius: 10px;
-              padding: 0 4px;
-              font-size: 0.44rem;
-            }
-          }
-          .shop-detail-tab-goods-logo,
-          .shop-detail-tab-goods-info {
-            display: inline-block;
-            vertical-align: top;
-          }
         }
       }
       .shop-detail-tab-goods-types,
       .shop-detail-tab-goods-list {
         display: inline-block;
+        float: left;
         vertical-align: top;
       }
     }

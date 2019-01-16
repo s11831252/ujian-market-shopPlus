@@ -224,7 +224,7 @@ export default new Vuex.Store({//store对象
       actions: {
         async GetShopDetail (context,payload) {
           var arr = Object.getOwnPropertyNames(context.state.ShopDetail);
-          if(payload.refresh||arr.length == 0)
+          if(payload.refresh||arr.length <=1)
           {
             var rep = await ShoppingAPI.Shop_GetDetails({sId:payload.sId});
             if(rep.ret==0)

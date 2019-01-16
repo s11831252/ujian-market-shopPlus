@@ -80,7 +80,7 @@ export default {
     }
   },
   onShareAppMessage(result) {
-    let title = this.shopDetail.sName;
+    let title = this.extConfig.sName||this.shopDetail.sName;
     let path = `/pages/shop/index?sId=${this.shopDetail.sId}`;
     return {
       title,
@@ -139,5 +139,10 @@ ul.shop-detail-info {
   > li:last-child {
     border: none;
   }
+}
+button{
+  width: 8rem;
+  height: 0.5rem;
+  display: inline-block;
 }
 </style>

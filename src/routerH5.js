@@ -16,7 +16,7 @@ Vue.use(Router)
 var routes = [
     {
         path:'/',
-        redirect:'pages/index/index'
+        redirect:'pages/shop/index'
     },
     {
         path: 'pages/index/index',
