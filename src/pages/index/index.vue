@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import card from "@/components/card";
 import login from "@/components/login";
 export default {
   data() {
@@ -35,7 +34,6 @@ export default {
     };
   },
   components: {
-    card,
     login
   },
 
@@ -44,7 +42,6 @@ export default {
       wx.openSetting();
     },
     getUserInfoData(obj) {
-      console.log(obj);
       if (obj.mp.detail.errMsg.indexOf("getUserInfo:ok") != -1) {
         this.userInfo.nickName = obj.mp.detail.userInfo.nickName;
         this.userInfo.avatarUrl = obj.mp.detail.userInfo.avatarUrl;
@@ -64,34 +61,37 @@ export default {
       }
     },
     wx_login() {
+      var that = this;
       // 调用wx登录接口
       wx.login({
         success: obj => {
           if (obj.errMsg.indexOf("login:ok") > -1) {
-            // console.log(obj);
-            if(!this.extConfig||!this.extConfig.appid)
-            return;
-            this.$UJAPI.Account_wxLogin(obj.code,this.extConfig.appid).then(rep => {
+          
+            this.$WeixinOpenAPI.Account_wxLogin(obj.code,that.extConfig.appid).then(rep => {
               if (rep.ret == 0) {
                 // console.log(rep);
                 this.userInfo.unionid = rep.data.result.unionid;
                 this.userInfo.openid = rep.data.result.openid;
                 // console.log(this.userInfo);
-
+                debugger;
                 if (rep.data.ticket) {
                   this.$store.commit("Login", { Ticket: rep.data.ticket }); //存入Ticket
                   this.$ShoppingAPI.User_Get().then(userinfo => {
                     if (userinfo.ret == 0) {
+                      userinfo.data.unionid= rep.data.result.unionid;
+                      userinfo.data.openid = rep.data.result.openid;
+                      // console.log(userinfo.data);
                       this.$store.commit("GetUserInfo", userinfo.data);
                       if (this.$route.query.redirect)
                         // 切换至 tabBar页面
                         this.$router.push({
                           path: this.$route.query.redirect,
+                          isTab: true
                         });
                       // 切换至 tabBar页面
                       else
                         this.$router.push({
-                          path: "/pages/shop/index",
+                          path: "/pages/home/index",
                           isTab: true
                         });
                     }
@@ -131,7 +131,7 @@ export default {
   },
   created() {
     //1. 调用wx.login
-    // this.wx_login();
+    this.wx_login();
   }
 };
 </script>

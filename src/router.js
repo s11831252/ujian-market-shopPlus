@@ -8,6 +8,14 @@ var routes = [
           },
     },
     {
+        path: 'pages/index/index',
+        name: 'index',
+        config: {
+            navigationBarTitleText: '授权登录页',
+            enablePullDownRefresh: false
+        },
+    },
+    {
         path: 'pages/home/index',
         name: 'home',
         config: {

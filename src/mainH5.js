@@ -4,6 +4,7 @@ import store from './store'
 import router from './routerH5'
 import UJAPI from "./api/UJAPI"
 import ShoppingAPI from "./api/ShoppingAPI"
+import WeixinOpenAPI from "./api/WeixinOpenAPI"
 import fts from './utils/autorem'
 
 import Toast from './components/Toast';
@@ -11,6 +12,8 @@ Vue.use(Toast);
 
 Vue.prototype.$UJAPI = UJAPI; //在实例中用$UJAPI调用UJAPI封装好的RestAPI
 Vue.prototype.$ShoppingAPI = ShoppingAPI; //在实例中用$ShoppingAPI调用ShoppingAPI.js封装好的RestAPI
+Vue.prototype.$WeixinOpenAPI = WeixinOpenAPI; //在实例中用$WeixinOpenAPI调用WeixinOpenAPI.js封装好的RestAPI
+
 Vue.mixin({
   computed: {
     isMP(){

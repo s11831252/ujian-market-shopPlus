@@ -21,7 +21,7 @@
             <div class="goods-items">
                 <div class="goods-items-buy">
                     <span>数量：</span>
-                    <!-- <buy :goods="item" :image="goods_detail.Images[0].Thumbnail_url" :sName="sName" v-if="index==selectItem_index" v-for="(item,index) in goods_detail.Goods_Items" :key="index"></buy> -->
+                    <buy :goods="item" :image="goods_detail.Images[0].Thumbnail_url" :sName="sName" v-if="index==selectItem_index" v-for="(item,index) in goods_detail.Goods_Items" :key="index"></buy>
                 </div>
                 <div class="goods-items-show" v-if="HasItems">
                     <span>规格：</span>
@@ -53,7 +53,7 @@
                 </div>
             </div>
         </div>
-        <!-- <shoppingCar :sId="sId"></shoppingCar> -->
+        <shoppingCar :sId="sId"></shoppingCar>
     </div>
 </template>
 <script>
@@ -115,16 +115,13 @@ export default {
     if (this.$route.query && this.$route.query.sId && this.$route.query.gId) {
       this.sId = this.$route.query.sId;
       this.gId = this.$route.query.gId;
-      // console.log(this.$route.query.sName);
       this.sName= decodeURI(this.$route.query.sName);
-      // console.log(this.sName);
       var rep = await this.$ShoppingAPI.Goods_Get({
         sId: this.sId,
         gId: this.gId
       });
       if (rep.ret == 0) {
         this.goods_detail = rep.data;
-         console.log(this.goods_detail);
       }
     }
   }

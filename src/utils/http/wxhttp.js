@@ -16,10 +16,9 @@ const net = {
         data: data,
         method: 'GET', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
         header: {
-          'X-Bmob-Application-Id': bmobConfig.applicationId,
-          'X-Bmob-REST-API-Key': bmobConfig.restApiKey,
           'Content-Type': 'application/json',
           'Device':"WebApp",
+          'DisplayVersion':"2.0.11",
           'SingleTicket':store.state.User.SingleTicket
         }, // 设置请求的 header
         success: function (res) {
@@ -69,9 +68,9 @@ const net = {
         data: data,
         method: 'POST', // OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT
         header: {
-          'X-Bmob-Application-Id': bmobConfig.applicationId,
-          'X-Bmob-REST-API-Key': bmobConfig.restApiKey,
           'Content-Type': 'application/json',
+          'Device':"WebApp",
+          'DisplayVersion':"2.0.11",
           'SingleTicket':store.state.User.SingleTicket
         }, // 设置请求的 header
         success: function (res) {

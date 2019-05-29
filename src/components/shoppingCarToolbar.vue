@@ -20,7 +20,7 @@
             <i class="icon car-icon">&#xe600;</i>
             <span class="shoppingcar-count">{{getShoppingCarCountBysId}}件商品</span>
             <span class="shoppingcar-amount">￥{{getShoppingCarAmountBysId}}</span>
-            <button v-if="getShoppingCarAmountBysId>0" class="btn-buy" @click="go({path:'/pages/order/settle', isTab: true,query:{sId:sId}})">去结算</button>
+            <button v-if="getShoppingCarAmountBysId>0" class="btn-buy" @click="go({path:'/pages/order/settle',query:{sId:sId}})">去结算</button>
             <button v-else class="btn-buy Invalid">去结算</button>
             <button class="btn-show" @click="taggle">购物车</button>
         </div>

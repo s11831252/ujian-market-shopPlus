@@ -45,7 +45,7 @@
         </div>
       </div>
     </div>
-    <!-- <shoppingCar :sId="sId"></shoppingCar> -->
+    <shoppingCar :sId="shopDetail.sId"></shoppingCar>
     <customService></customService>
   </div>
 </template>
@@ -140,7 +140,7 @@ export default {
       });
     },
     async init(refresh) {
-      console.log(`init:`,this.extConfig);
+      // console.log(`init:`,this.extConfig);
       await this.GetShopDetail({ sId: this.extConfig.sId, refresh }); //获取店铺详情
       if (this.extConfig.sId) {
         if (this.shopDetail.sName&&this.isMP) {
