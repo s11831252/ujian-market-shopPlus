@@ -73,7 +73,6 @@ export default {
                 this.userInfo.unionid = rep.data.result.unionid;
                 this.userInfo.openid = rep.data.result.openid;
                 // console.log(this.userInfo);
-                debugger;
                 if (rep.data.ticket) {
                   this.$store.commit("Login", { Ticket: rep.data.ticket }); //存入Ticket
                   this.$ShoppingAPI.User_Get().then(userinfo => {

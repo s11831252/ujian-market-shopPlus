@@ -13,10 +13,10 @@
         <img class="wx" src="/static/img/wx.png" mode="aspectFit" />
         <i class="icon right" v-if="PayMode==1">&#xe633;</i>
       </li>
-      <li :class="{action:PayMode==2}" @click="selectPayMode(2)">
+      <!-- <li :class="{action:PayMode==2}" @click="selectPayMode(2)">
         <img class="zfb" src="/static/img/zhifubao.png" mode="aspectFit" />
         <i class="icon right" v-if="PayMode==2">&#xe633;</i>
-      </li>
+      </li> -->
     </ul>
     <div class="pay-confirm">
       <button class="btn-ok" @click="pay">确定支付</button>
@@ -98,13 +98,35 @@ export default {
       this.code = "";
     },
     async pay() {
-      this.openModal();
-      if (this.sendTime == 0) {
-        var rep = await this.$ShoppingAPI.Order_ValidationCode();
-        if (rep.ret == 0) {
-          this.countDown();
+      if(this.PayMode==0)
+      {
+        this.openModal();
+        if (this.sendTime == 0) {
+          var rep = await this.$ShoppingAPI.Order_ValidationCode();
+          if (rep.ret == 0) {
+            this.countDown();
+          }
         }
+      }else if(this.PayMode==1)
+      {
+        wx.navigateToMiniProgram({
+          appId: 'wx443ed32fe34ba2f0',
+          path: `page/order/index?OrderId=${this.OrderId}`,
+          extraData: {
+            SingleTicket: this.$store.state.User.SingleTicket
+          },
+          envVersion: 'develop',
+          success(res) {
+            console.log("打开小程序成功",res);
+            // 打开成功
+          },
+          fail(res){
+            // 打开失败
+            console.log("打开小程序失败",res);
+          }
+        })
       }
+
     },
     countDown() {
       if (this.sendTime == 0) {

@@ -162,11 +162,14 @@ export default {
         this.$store.commit("Login", { Ticket: req.data }); //存入Ticket
         var userinfo = await this.$ShoppingAPI.User_Get();
         this.$store.commit("GetUserInfo", userinfo.data);
+
         if (this.$route.query.redirect)
-          // 切换至 tabBar页面
+        {
           this.$router.push({ path: this.$route.query.redirect, isTab: true });
+          this.$router.push({ path: this.$route.query.redirect});
+        }
         // 切换至 tabBar页面
-        else this.$router.push({ path: "/pages/home/index", isTab: true });
+        else this.$router.push({ path: "/pages/shop/index", isTab: true });
       } else {
         this.toast("登录失败");
       }

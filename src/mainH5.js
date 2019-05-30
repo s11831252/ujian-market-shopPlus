@@ -26,6 +26,9 @@ Vue.mixin({
         "sId":"E483F458-7FB4-4FC2-BE39-001E644962BA",
         "appid":"wxf1850ddc593ea296"
       }
+    },
+    async launchOptions(){
+      return {}
     }
   },
   methods: {

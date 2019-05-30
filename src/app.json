@@ -10,10 +10,17 @@
         "pagePath": "pages/shop/index",
         "text": "商品清单"
       },
-
       {
         "pagePath": "pages/shop/detail",
         "text": "联系我们"
+      },
+      {
+        "pagePath": "pages/order/index",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的"
       }
     ]
   },

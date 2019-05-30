@@ -27,8 +27,11 @@ Vue.mixin({
             return true;
         },
         extConfig() {
-            debugger;
             return wx.getExtConfigSync ? wx.getExtConfigSync() : {};
+        },
+        async launchOptions(){
+            var options =  await wx.getLaunchOptionsSync();
+            return options;
         }
     },
     methods: {
