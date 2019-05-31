@@ -10,13 +10,13 @@
         <i class="icon right" v-if="PayMode==0">&#xe633;</i>
       </li>
       <li :class="{action:PayMode==1}" @click="selectPayMode(1)">
-        <img class="wx" src="/static/img/wx.png" mode="aspectFit" />
+        <img class="wx" src="/static/img/wx.png" mode="aspectFit">
         <i class="icon right" v-if="PayMode==1">&#xe633;</i>
       </li>
       <!-- <li :class="{action:PayMode==2}" @click="selectPayMode(2)">
         <img class="zfb" src="/static/img/zhifubao.png" mode="aspectFit" />
         <i class="icon right" v-if="PayMode==2">&#xe633;</i>
-      </li> -->
+      </li>-->
     </ul>
     <div class="pay-confirm">
       <button class="btn-ok" @click="pay">确定支付</button>
@@ -25,14 +25,17 @@
     <div class="modal pay-validCodeBox" v-if="modalOpen" @click="openModal">
       <div class="modal-container" @click.stop>
         <div class="box-title">
-          <i class="icon"></i><span>请输入验证码</span>
+          <i class="icon"></i>
+          <span>请输入验证码</span>
         </div>
         <div class="box-body">
           <p>商城付款</p>
           <p class="pay-money">￥{{money}}</p>
-          <p><a class="countDown" @click="countDown">{{countDownStr}}</a></p>
+          <p>
+            <a class="countDown" @click="countDown">{{countDownStr}}</a>
+          </p>
           <div class="blocks">
-            <input type="number" maxlength="4" v-model="code" focus=’true’ auto-focus=’true’ />
+            <input type="number" maxlength="4" v-model="code" focus="’true’" auto-focus="’true’">
             <div class="block">
               <span v-if="!code.length" class="cursor"></span>
               <span v-if="code.length">{{code[0]}}</span>
@@ -69,7 +72,7 @@ export default {
       },
       code: "",
       PayMode: 0,
-      OrderId: "",
+      OrderId: null,
       modalOpen: false,
       countDownStr: "点击发送验证码",
       sendTime: 0
@@ -98,8 +101,7 @@ export default {
       this.code = "";
     },
     async pay() {
-      if(this.PayMode==0)
-      {
+      if (this.PayMode == 0) {
         this.openModal();
         if (this.sendTime == 0) {
           var rep = await this.$ShoppingAPI.Order_ValidationCode();
@@ -107,26 +109,24 @@ export default {
             this.countDown();
           }
         }
-      }else if(this.PayMode==1)
-      {
+      } else if (this.PayMode == 1) {
         wx.navigateToMiniProgram({
-          appId: 'wx443ed32fe34ba2f0',
+          appId: "wx443ed32fe34ba2f0",
           path: `page/order/index?OrderId=${this.OrderId}`,
           extraData: {
             SingleTicket: this.$store.state.User.SingleTicket
           },
-          envVersion: 'develop',
+          envVersion: "develop",
           success(res) {
-            console.log("打开小程序成功",res);
+            console.log("打开小程序成功", res);
             // 打开成功
           },
-          fail(res){
+          fail(res) {
             // 打开失败
-            console.log("打开小程序失败",res);
+            console.log("打开小程序失败", res);
           }
-        })
+        });
       }
-
     },
     countDown() {
       if (this.sendTime == 0) {
@@ -150,8 +150,19 @@ export default {
       return (this.OrderInfo.TotalAmount - this.OrderInfo.PayAmount).toFixed(2);
     }
   },
+  async onShow() {
+    let that = this;
+    //1.从商家小程序跳转到U建行业市场小程序进行微信支付,此处通过小程序api获取启动时商家小程序传递过来的用户票据SingleTicket
+    var options = await that.launchOptions
+    if (options.scene == 1038) {
+      if(options.referrerInfo&&options.referrerInfo.extraData)
+      {
+        this.OrderId =options.referrerInfo.extraData.OrderId;
+      }
+    }
+  },
   async mounted() {
-    if (this.$route.query && this.$route.query.OrderId) {
+    if (this.OrderId||(this.OrderIdthis.$route.query && this.$route.query.OrderId)) {
       this.OrderId = this.$route.query.OrderId;
       var rep = await this.$ShoppingAPI.Order_Get({ OrderId: this.OrderId });
       if (rep.ret == 0) {
@@ -260,17 +271,17 @@ export default {
       }
       .blocks {
         text-align: center;
-          position: relative;
-          display: flex;
-          // flex-direction: row;
-          // align-items: center;
-          justify-content:center;
+        position: relative;
+        display: flex;
+        // flex-direction: row;
+        // align-items: center;
+        justify-content: center;
         .block {
           width: 30px;
           height: 30px;
           border: 1px solid #5c5c5c;
           margin-left: 10px;
-          span{
+          span {
             line-height: 30px;
           }
         }

@@ -30,7 +30,7 @@ Vue.mixin({
             return wx.getExtConfigSync ? wx.getExtConfigSync() : {};
         },
         async launchOptions(){
-            var options =  await wx.getLaunchOptionsSync();
+            var options = await  wx.getLaunchOptionsSync();
             return options;
         }
     },
