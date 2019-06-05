@@ -41,6 +41,6 @@ export default {
 }
 page{
   /* background: #ecf0f1; */
-  /* margin-bottom: 45px; */
+  margin-bottom: 45px;
 }
 </style>

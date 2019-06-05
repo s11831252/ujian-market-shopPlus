@@ -197,7 +197,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .shop-detail {
-  padding-bottom: 65px;
+  padding-bottom: 95px;
   .shop-detail-head {
     background-color: #12b7f5;
     padding: 20px 5px 0 10px;
