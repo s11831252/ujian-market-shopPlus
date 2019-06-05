@@ -59,7 +59,7 @@ export default {
       if(!isNaN(newval))
       {
         var n= parseInt(newval);
-        if(n>=0&&n <this.goods.Stock)
+        if(n>=0&&n <=this.goods.Stock)
         {
           this.ShoppingCarPush({
             sId:this.goods.sId,
