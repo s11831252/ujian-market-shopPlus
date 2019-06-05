@@ -104,7 +104,7 @@ export default {
   methods: {
     async countDown() {
       if (this.sendTime == 0 && this.codeAction) {
-        var rep = await this.$ShoppingAPI.Account_ValidationCode({
+        var rep = await this.$WeixinOpenAPI.Account_ValidationCode({
           Phone: this.userInfo.Account
         });
         if (rep.ret == 0) {
@@ -150,10 +150,11 @@ export default {
         this.toast("请输入验证码");
         return;
       }
-      var req = await this.$ShoppingAPI.Account_SimpleLogin({
+      var req = await this.$WeixinOpenAPI.Account_SimpleLogin({
         Phone: this.userInfo.Account,
         unionid: this.userInfo.unionid,
         openid: this.userInfo.openid,
+        appid: this.extConfig.appid,
         UserName: this.userInfo.nickName,
         VerificationCode: this.VerificationCode
       });
