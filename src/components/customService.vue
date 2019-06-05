@@ -13,7 +13,7 @@ export default {
 <style lang="less" scoped>
 .custom{
     position:fixed;
-    bottom :5%;
+    bottom :10%;
     left: 2%;
     .custom-btn{
         i{
