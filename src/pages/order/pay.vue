@@ -162,7 +162,7 @@ export default {
     }
   },
   async mounted() {
-    if (this.OrderId||(this.OrderIdthis.$route.query && this.$route.query.OrderId)) {
+    if (this.OrderId||(this.$route.query && this.$route.query.OrderId)) {
       this.OrderId = this.$route.query.OrderId;
       var rep = await this.$ShoppingAPI.Order_Get({ OrderId: this.OrderId });
       if (rep.ret == 0) {
