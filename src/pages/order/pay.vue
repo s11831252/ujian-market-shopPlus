@@ -112,7 +112,7 @@ export default {
       } else if (this.PayMode == 1) {
         wx.navigateToMiniProgram({
           appId: "wx443ed32fe34ba2f0",
-          path: `page/order/index?OrderId=${this.OrderId}`,
+          path: `pages/order/pay?OrderId=${this.OrderId}`,
           extraData: {
             SingleTicket: this.$store.state.User.SingleTicket
           },
@@ -227,6 +227,7 @@ export default {
       border-radius: 5px;
       display: inline-block;
       width: 80%;
+      margin-bottom: 5px;
     }
     .btn-no {
       background-color: #fff;
@@ -238,6 +239,7 @@ export default {
       color: #12b7f5;
       display: inline-block;
       width: 80%;
+      margin-bottom: 5px;
     }
   }
   .modal {
