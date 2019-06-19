@@ -15,4 +15,10 @@ export default {
     User_Get: param => {
         return http.get(BaseHost + "api/User/Get", param)
     },
+    Balance_Purse: () => {
+        return http.get(BaseHost + "api/Purse/Balance")
+    },
+    GetKeyword:param=>{
+        return http.get(BaseHost+ "api/CommonInfo/GetKeyword",param) 
+     }
 }

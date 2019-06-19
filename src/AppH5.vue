@@ -26,9 +26,7 @@ export default {
 };
 </script>
 <style>
-@import url('./assets/global.css');
-@import url('./assets/iconfont.less');
-@import url('./components/Toast/toast.css');
+
 #app{
   margin-bottom: 45px;
 }

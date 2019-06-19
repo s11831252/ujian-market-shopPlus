@@ -21,8 +21,7 @@ export default {
 </script>
 
 <style>
-@import url('./assets/global.css');
-@import url('./assets/iconfont.less');
+
 .container {
   height: 100%;
   display: flex;

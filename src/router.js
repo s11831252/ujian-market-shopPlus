@@ -40,6 +40,22 @@ var routes = [
           },
     },
     {
+        path: 'pages/my/address',
+        name: 'address',
+        config: {
+            navigationBarTitleText: '收货地址管理',
+            enablePullDownRefresh: false
+          },
+    },
+    {
+        path: 'pages/my/addressadd',
+        name: 'addressadd',
+        config: {
+            navigationBarTitleText: '新增收货地址',
+            enablePullDownRefresh: false
+          },
+    },
+    {
         path:'pages/shop/detail',
         name:'shopdetail',
         config: {

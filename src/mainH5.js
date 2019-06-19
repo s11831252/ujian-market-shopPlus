@@ -8,6 +8,14 @@ import WeixinOpenAPI from "./api/WeixinOpenAPI"
 import fts from './utils/autorem'
 
 import Toast from './components/Toast';
+import './assets/style.css';
+import './assets/global.css';
+import './assets/iconfont.less';
+import './components/Toast/toast.css';
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+let { swiper, swiperSlide } = VueAwesomeSwiper
+
+import "swiper/dist/css/swiper.css";
 Vue.use(Toast);
 
 Vue.prototype.$UJAPI = UJAPI; //在实例中用$UJAPI调用UJAPI封装好的RestAPI
@@ -15,6 +23,10 @@ Vue.prototype.$ShoppingAPI = ShoppingAPI; //在实例中用$ShoppingAPI调用Sho
 Vue.prototype.$WeixinOpenAPI = WeixinOpenAPI; //在实例中用$WeixinOpenAPI调用WeixinOpenAPI.js封装好的RestAPI
 
 Vue.mixin({
+  components: {
+    swiper,
+    swiperSlide
+  },
   computed: {
     isMP(){
         return false;

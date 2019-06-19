@@ -5,7 +5,9 @@ import store from './store'
 import UJAPI from "./api/UJAPI"
 import ShoppingAPI from "./api/ShoppingAPI"
 import WeixinOpenAPI from "./api/WeixinOpenAPI"
-
+import './assets/style.css';
+import './assets/global.css';
+import './assets/iconfont.less';
 import { debug } from 'util';
 
 Vue.prototype.$UJAPI = UJAPI; //在实例中用$UJAPI调用UJAPI封装好的RestAPI
