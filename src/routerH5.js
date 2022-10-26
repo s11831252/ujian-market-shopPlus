@@ -8,9 +8,12 @@ import addressadd from './pages/my/addressadd'
 import index from './pages/index/indexH5'
 import shop from './pages/shop/index'
 import shopgoods from './pages/shop/detail'
+import goodDetail from './pages/shop/good-detail'
 import settle from './pages/order/settle'
 import logistics from './pages/order/logistics'
 import pay from './pages/order/pay'
+import IM from './pages/IM/index'
+
 
 
 import store from './store'
@@ -99,12 +102,22 @@ var routes = [
         path:'pages/shop/detail',
         name:'shopgoods',
         config: {
-            navigationBarTitleText: '商品详情',
+            navigationBarTitleText: '店铺详情',
             enablePullDownRefresh: false
         },
         alias: '/pages/shop/detail',
         component: shopgoods
-    },    
+    },
+    {
+        path:'pages/shop/good-detail',
+        name:'goodDetail',
+        config: {
+            navigationBarTitleText: '商铺详情',
+            enablePullDownRefresh: false
+        },
+        alias: '/pages/shop/good-detail',
+        component: goodDetail
+    },
     {
         path:'pages/order/settle',
         name:'settle',
@@ -134,6 +147,16 @@ var routes = [
         },
         alias: '/pages/order/pay',
         component: pay
+    },
+    {
+        path:'pages/IM/index',
+        name:'index',
+        config: {
+            navigationBarTitleText: '订单支付',
+            enablePullDownRefresh: false
+        },
+        alias: '/pages/IM/index',
+        component: IM
     }
 ]
 

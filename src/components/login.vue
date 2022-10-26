@@ -171,7 +171,8 @@ export default {
         }
         // 切换至 tabBar页面
         else this.$router.push({ path: "/pages/shop/index", isTab: true });
-      } else {
+      } 
+      else {
         this.toast("登录失败");
       }
     }

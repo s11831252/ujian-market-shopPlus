@@ -1,6 +1,7 @@
 <template>
     <div class="custom">
-        <button class="custom-btn" open-type="contact">
+        <button class="custom-btn" @click="go({path:'/pages/IM/index'})" open-type="contact">
+        <!-- <button class="custom-btn" open-type="contact"> -->
             <i class="icon">&#xe734;</i>在线咨询
         </button>
     </div>

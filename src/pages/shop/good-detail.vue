@@ -49,7 +49,8 @@
                     <span>商品参数</span>
                 </p>
                 <div class="goods-detail-content">
-                  <wxParse :content="goods_detail.gDetailed" @preview="preview" @navigate="navigate" />
+                  <wxParse v-if="isMP" :content="goods_detail.gDetailed" @preview="preview" @navigate="navigate" />
+                  <div v-else v-html="goods_detail.gDetailed"></div>
                 </div>
             </div>
         </div>
@@ -109,9 +110,10 @@ export default {
     wxParse
   },
   async mounted() {
-    wx.showShareMenu({
-      withShareTicket: true
-    });
+    if(this.isMP)
+      wx.showShareMenu({
+        withShareTicket: true
+      });
     if (this.$route.query && this.$route.query.sId && this.$route.query.gId) {
       this.sId = this.$route.query.sId;
       this.gId = this.$route.query.gId;

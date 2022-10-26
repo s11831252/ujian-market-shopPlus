@@ -33,9 +33,9 @@ Vue.mixin({
     },
     extConfig() {
       return {
-        "sName": "水电建材汇",
-        "sLogo":"http://wx.qlogo.cn/mmopen/eTOoibR3VocHTbpuR2Q8KdP0ibrsT7mInvfyoLaQs3F4Q0wuUlGtJlYTWMVR7FfNvauvRavz02OoMiayZyZ6KkYcericMicqMh3Ss/0",
-        "sId":"E483F458-7FB4-4FC2-BE39-001E644962BA",
+        "sName": "U建信息化设备旗舰店",
+        "sLogo":"https://image.ujianchina.net/Shopping/ShopImages//7eb046ff17724f5e97da3d2a3c01be91/201808241024127524ZGG.jpg",
+        "sId":"7eb046ff-1772-4f5e-97da-3d2a3c01be91",
         "appid":"wxf1850ddc593ea296"
       }
     },
